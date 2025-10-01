@@ -9,7 +9,7 @@ Timestamp,Nama,Jenis Kelamin,Program Studi,"Tingkat Semester (angka saja, contoh
 9/25/2025 17:52:11,neisya,Perempuan,Ilmu Keperawatan ,1,2,2,3,2,2,3,1,5,1,5,5,5,5,5,5,5,3,1,4,3,5
 9/25/2025 17:59:01,Kania Nafis Tsabita,Perempuan,Akuntansi,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
 9/25/2025 18:37:05,Salsabillah Naqo Dafa Bakhita,Perempuan,Desain Produk,5,4,5,5,4,4,1,1,3,1,5,4,3,5,5,5,5,3,1,4,3,4
-9/25/2025 18:46:39,zhuchria ulfani,Perempuan,Ilmu Keolahragaan,2,5,4,5,5,3,1,3,5,5,5,3,4,1,3,2,3,3,5,5,5,5
+9/25/2025 18:46:39,zhuchria ulfani,Perempuan,Ilmu Keolahragaan,5,5,4,5,5,3,1,3,5,5,5,3,4,1,3,2,3,3,5,5,5,5
 9/25/2025 19:14:16,Nabila,Perempuan,Manajemen,7,5,4,3,4,3,1,2,2,3,5,3,4,4,5,4,3,5,4,4,3,4
 9/25/2025 19:23:53,Clarissa Laras Ayu ,Perempuan,Teknologi Kedokteran ,5,5,5,5,4,5,2,2,4,2,3,5,4,5,5,3,3,4,1,5,5,5
 9/25/2025 19:31:50,Muhammad Iqbal Putra Subekti ,Laki - Laki,Teknologi Kedokteran ,5,3,3,5,3,3,5,1,5,1,5,5,5,5,5,5,5,5,1,5,4,5
@@ -40,8 +40,8 @@ Timestamp,Nama,Jenis Kelamin,Program Studi,"Tingkat Semester (angka saja, contoh
 9/26/2025 13:46:11,M,Perempuan,Psikologi,7,5,4,5,3,4,1,1,4,1,3,3,4,5,5,5,5,4,2,4,4,4
 9/26/2025 14:34:11,Choirunnisa Jannati Lubis ,Perempuan,Psikologi ,7,2,4,3,4,4,2,2,4,3,4,5,5,5,4,2,2,4,4,4,3,5
 9/26/2025 14:49:05,Ilham Fharis,Laki - Laki,Manajemen penerbangan,5,3,2,4,1,2,4,2,3,3,5,4,4,3,4,4,4,2,3,5,5,5
-9/27/2025 14:31:29,Mirza Abimana,Laki - Laki,Teknik Informatika,6,3,4,2,3,4,2,3,4,5,5,5,5,3,4,4,3,1,1,4,5,4
-9/27/2025 15:40:59,rafa,Perempuan,Teknik Informatika,6,3,3,4,4,4,4,4,4,4,5,4,4,5,4,4,3,3,4,3,4,4
+9/27/2025 14:31:29,Mirza Abimana,Laki - Laki,Teknik Informatika,7,3,4,2,3,4,2,3,4,5,5,5,5,3,4,4,3,1,1,4,5,4
+9/27/2025 15:40:59,rafa,Perempuan,Teknik Informatika,7,3,3,4,4,4,4,4,4,4,5,4,4,5,4,4,3,3,4,3,4,4
 9/27/2025 16:54:48,rer,Perempuan,Teknik Informatika,7,2,2,4,3,3,2,2,5,2,4,5,5,5,5,2,2,1,1,4,3,4
 9/27/2025 16:56:55,tanis,Perempuan,Teknik Informatika,7,3,4,3,4,3,3,4,4,4,3,4,4,5,5,5,5,3,3,4,5,5
 9/27/2025 20:08:58,Dzulhawari,Laki - Laki,Digital Marketing,7,3,3,3,3,3,1,4,4,4,5,5,5,4,4,4,5,2,1,4,3,1
