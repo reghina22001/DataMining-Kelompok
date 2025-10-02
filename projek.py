@@ -1,12 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.metrics import silhouette_score, davies_bouldin_score
 import plotly.express as px
 import plotly.graph_objects as go
+from sklearn.decomposition import PCA 
+import random
 
 st.set_page_config(
     page_title="Pemetaan Tingkat Stres & Strategi Coping", 
@@ -92,6 +90,80 @@ def load_data():
         st.error(f"❌ Error membaca 'data.csv': {e}")
         st.stop()
 
+# PREPROCESSING 
+def standardize(X):
+    means = X.mean(axis=0)
+    stds = X.std(axis=0, ddof=0)
+    return (X - means) / stds, means, stds
+
+# ALGORITMA KMEANS 
+def kmeans(X, n_clusters=3, max_iter=300, random_state=42):
+    random.seed(random_state)
+    centroids = X[random.sample(range(len(X)), n_clusters)]
+
+    for _ in range(max_iter):
+        clusters = []
+        for row in X:
+            distances = [np.linalg.norm(row - c) for c in centroids]
+            clusters.append(np.argmin(distances))
+        clusters = np.array(clusters)
+
+        new_centroids = []
+        for k in range(n_clusters):
+            if np.any(clusters == k):
+                new_centroids.append(X[clusters == k].mean(axis=0))
+            else:
+                new_centroids.append(X[random.randint(0, len(X)-1)])
+        new_centroids = np.array(new_centroids)
+
+        if np.allclose(centroids, new_centroids):
+            break
+        centroids = new_centroids
+
+    return clusters, centroids
+
+# METRIK 
+def inertia(X, clusters, centroids):
+    return sum(np.linalg.norm(X[i] - centroids[clusters[i]])**2 for i in range(len(X)))
+
+def silhouette(X, clusters):
+    n = len(X)
+    scores = []
+    for i in range(n):
+        same_cluster = X[clusters == clusters[i]]
+        other_clusters = [X[clusters == c] for c in set(clusters) if c != clusters[i]]
+
+        a = np.mean([np.linalg.norm(X[i] - p) for p in same_cluster if not np.array_equal(X[i], p)]) if len(same_cluster) > 1 else 0
+        b = min([np.mean([np.linalg.norm(X[i] - p) for p in oc]) for oc in other_clusters]) if other_clusters else 0
+
+        if max(a, b) > 0:
+            scores.append((b - a) / max(a, b))
+    return np.mean(scores) if scores else 0
+
+def davies_bouldin(X, clusters, centroids):
+    k = len(centroids)
+    cluster_sigs = []
+    for i in range(k):
+        members = X[clusters == i]
+        if len(members) > 0:
+            sig = np.mean([np.linalg.norm(m - centroids[i]) for m in members])
+        else:
+            sig = 0
+        cluster_sigs.append(sig)
+
+    db_indexes = []
+    for i in range(k):
+        max_ratio = 0
+        for j in range(k):
+            if i != j:
+                d = np.linalg.norm(centroids[i] - centroids[j])
+                if d > 0:
+                    ratio = (cluster_sigs[i] + cluster_sigs[j]) / d
+                    max_ratio = max(max_ratio, ratio)
+        db_indexes.append(max_ratio)
+    return np.mean(db_indexes)
+
+# APP START
 data = load_data()
 
 if data is None or data.shape[0] == 0:
@@ -214,26 +286,24 @@ with tab2:
                         if n_dropped > 0:
                             st.warning(f"⚠️ {n_dropped} baris diabaikan (nilai kosong).")
 
-                        X = data.loc[valid_mask, selected_features].copy()
-                        
-                        # Standardisasi (penting untuk K-Means!)
-                        scaler = StandardScaler()
-                        X_scaled = scaler.fit_transform(X)
+                        X = data.loc[valid_mask, selected_features].copy().to_numpy()
 
-                        # K-Means Clustering
-                        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10, max_iter=300)
-                        clusters = kmeans.fit_predict(X_scaled)
+                        # Standardisasi 
+                        X_scaled, means, stds = standardize(X)
 
-                        # Evaluasi clustering
-                        silhouette = silhouette_score(X_scaled, clusters)
-                        davies_bouldin = davies_bouldin_score(X_scaled, clusters)
-                        inertia = kmeans.inertia_
+                        # KMeans 
+                        clusters, centroids = kmeans(X_scaled, n_clusters=n_clusters)
+
+                        # Evaluasi 
+                        silhouette = silhouette(X_scaled, clusters)
+                        davies_bouldin = davies_bouldin(X_scaled, clusters, centroids)
+                        inertia = inertia(X_scaled, clusters, centroids)
 
                         clustered_data = data.copy()
                         clustered_data['Cluster'] = pd.NA
                         clustered_data.loc[valid_mask, 'Cluster'] = clusters
 
-                        # PCA untuk visualisasi
+                        # PCA (sklearn)
                         pca = PCA(n_components=2)
                         pca_result = pca.fit_transform(X_scaled)
                         clustered_data.loc[valid_mask, "PCA1"] = pca_result[:, 0]
@@ -281,8 +351,7 @@ with tab2:
                     size_max=10
                 )
                 
-                # Tambahkan centroid
-                centroids_pca = pca.transform(kmeans.cluster_centers_)
+                centroids_pca = pca.transform(centroids)
                 for i, centroid in enumerate(centroids_pca):
                     fig.add_trace(go.Scatter(
                         x=[centroid[0]], y=[centroid[1]],
@@ -303,7 +372,6 @@ with tab2:
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
-                # Export
                 st.markdown("### 💾 Export Hasil")
                 try:
                     png_bytes = fig.to_image(format='png', width=1200, height=800)
